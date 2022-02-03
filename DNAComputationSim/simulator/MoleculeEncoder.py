@@ -1,3 +1,4 @@
+import itertools
 import random as rand
 
 from pydna.dseq import Dseq as DnaSeq
@@ -18,17 +19,13 @@ class Encoder:
     }
     SEQ_LEN = 20
 
-    def encodeNodes(self, graph):
-        return {node: (
-            seq := "".join(str(self.base_list[rand.randint(0, len(self.base_list) - 1)]) for _ in range(self.SEQ_LEN)))
+    def synthesizeNodes(self, graph):
+        return {node: "".join(rand.choices(self.base_list, k=self.SEQ_LEN))
                 for node in graph.nodes()}
 
-    def encodeEdges(self, graph, encoded_nodes):
-        return {(u, v): encoded_nodes[u][-10:] + encoded_nodes[v][10:]
-                for u in graph.nodes() for v in graph.nodes()
-                if (u, v) in graph.edges()}
-
-        return encoded_edges
+    def synthesizeEdges(self, graph, encoded_nodes):
+        return {(u, v): encoded_nodes[u][-10:] + encoded_nodes[v][:10]
+                for (u, v) in set(graph.edges())}
 
     def getSeqComplement(self, seq):
         return "".join(self.COMPLEMENTS[base] for base in seq)[::-1]

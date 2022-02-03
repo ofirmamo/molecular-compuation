@@ -4,6 +4,7 @@
 # author: Jack Burns
 # create date: 11/13/2017
 # version 1.0
+import math
 import sys
 
 import matplotlib.pyplot as plt
@@ -21,46 +22,49 @@ enc = Encoder()
 def main():
     # arguments: graph_name, start_v, end_v
     graphs = Graph()
-    if len(sys.argv) < 4:
+    if len(sys.argv) not in [2, 4]:
         print("Input is not valid")
         return exit(1)
+
+    try:
+        graph = getattr(graphs, sys.argv[1])
+    except FileNotFoundError:
+        print("Wrong file")
+        return exit(1)
+
+    start_vertex = "a0"
+    end_vertex = f"a{len(graph.nodes()) // 3}"
+    if len(sys.argv) == 4:
+        start_vertex = str(sys.argv[2]).upper()
+        end_vertex = str(sys.argv[3]).upper()
+
+    synthesized_nodes = enc.synthesizeNodes(graph)
+
+    if start_vertex and start_vertex not in synthesized_nodes:
+        print("could not identify start vertex")
+        return exit(1)
+    if end_vertex and end_vertex not in synthesized_nodes:
+        print("could not identify end vertex")
+        return exit(1)
+
+    ham_graph_path = 'graphs/ham_path'
+    synthesized_edges = enc.synthesizeEdges(graph, synthesized_nodes)
+    node_names = [node for node in synthesized_nodes.keys() if node not in [start_vertex, end_vertex]]
+    nx.draw_networkx(graph, with_labels=True)
+    plt.savefig('graphs/graph.png')
+    plt.clf()
+
+    x = createTubeSolution(synthesized_nodes, synthesized_edges, start_vertex, end_vertex)
+    filtered_paths = filter(x, synthesized_nodes, node_names)
+    results = getResults(synthesized_nodes, synthesized_edges, filtered_paths, ham_graph_path)
+
+    if results[0] == True:
+        print("\nTHERE IS A HAMILTONIAN PATH " + str(results[1]))
+        return exit(0)
+
     else:
-        try:
-            graph = getattr(graphs, sys.argv[1])
-        except FileNotFoundError:
-            print("Wrong file or file path")
-            return exit(1)
-
-        else:
-            start_vertex = str(sys.argv[2]).upper()
-            end_vertex = str(sys.argv[3]).upper()
-            encoded_nodes = enc.encodeNodes(graph)
-
-            if start_vertex not in encoded_nodes:
-                print("could not identify start vertex")
-                return exit(1)
-            elif end_vertex not in encoded_nodes:
-                print("could not identify end vertex")
-                return exit(1)
-            else:
-                ham_graph_path = 'graphs/ham_path'
-                encoded_edges = enc.encodeEdges(graph, encoded_nodes)
-                node_names = [node for node in encoded_nodes if node != start_vertex and node != end_vertex]
-                nx.draw_circular(graph, with_labels=True)
-                plt.savefig('graphs/graph.png')
-                plt.clf()
-
-                x = createTubeSolution(encoded_nodes, encoded_edges, start_vertex, end_vertex)
-                filtered_paths = filter(x, encoded_nodes, node_names)
-                results = getResults(encoded_nodes, encoded_edges, filtered_paths, ham_graph_path)
-
-                if results[0] == True:
-                    print("\nTHERE IS A HAMILTONIAN PATH " + str(results[1]))
-                    return exit(0)
-
-                else:
-                    print("\nTHERE IS NOT HAMILTONIAN PATH")
-                    return exit(0)
+        print("\nTHERE IS NOT HAMILTONIAN PATH")
+        return exit(0)
 
 
 def getResults(nodes, edges, filtered_results, file_name):
@@ -77,10 +81,10 @@ def getResults(nodes, edges, filtered_results, file_name):
     return (ham_path, ham_path_tup[1])
 
 
-def createTubeSolution(encoded_nodes, encoded_edges, start, end):
-    dna_sequences = enc.toDnaSequence(encoded_nodes, encoded_edges)
-    p1 = DnaSeqRecord(encoded_nodes[start])
-    p2 = DnaSeqRecord(enc.getSeqComplement(encoded_nodes[end]))
+def createTubeSolution(synthesized_nodes, synthesized_edges, start, end):
+    dna_sequences = enc.toDnaSequence(synthesized_nodes, synthesized_edges)
+    p1 = DnaSeqRecord(synthesized_nodes[start])
+    p2 = DnaSeqRecord(enc.getSeqComplement(synthesized_nodes[end]))
     tube_solution = Assembly(dna_sequences, limit=10)
     print("\n" + str(tube_solution) + "\n")
     candidates = []
@@ -89,7 +93,7 @@ def createTubeSolution(encoded_nodes, encoded_edges, start, end):
         product = tube_solution.linear_products[i]
         template = DnaSeqRecord(product)
         pcr = Anneal([p1, p2], template, limit=10)
-        gel = len(encoded_nodes) * enc.SEQ_LEN
+        gel = len(synthesized_nodes) * enc.SEQ_LEN
 
         if len(pcr.products) != 0:
             print(product.detailed_figure())
@@ -140,6 +144,7 @@ def extractEdges(path, node_list, edge_list):
             g.add_edge(edge[0], edge[1])
 
     return (g, order_edges)
+
 
 if __name__ == '__main__':
     main()
