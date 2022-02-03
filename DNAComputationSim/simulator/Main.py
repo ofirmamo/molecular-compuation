@@ -4,7 +4,6 @@
 # author: Jack Burns
 # create date: 11/13/2017
 # version 1.0
-import math
 import sys
 
 import matplotlib.pyplot as plt
@@ -27,7 +26,7 @@ def main():
         return exit(1)
 
     try:
-        graph = getattr(graphs, sys.argv[1])
+        graph = getattr(graphs, sys.argv[1] if sys.argv[1].endswith("Graph") else f"{sys.argv[1].lower()}Graph")
     except FileNotFoundError:
         print("Wrong file")
         return exit(1)
@@ -60,7 +59,9 @@ def main():
 
     if results[0] == True:
         print("\nTHERE IS A HAMILTONIAN PATH " + str(results[1]))
-        return exit(0)
+        if str(results[1]) != "[('BOSTON', 'CHICAGO'), ('CHICAGO', 'DETROIT'), ('DETROIT', 'ATLANTA')]":
+            print("damn!!")
+        # return exit(0)
 
     else:
         print("\nTHERE IS NOT HAMILTONIAN PATH")
@@ -83,16 +84,15 @@ def getResults(nodes, edges, filtered_results, file_name):
 
 def createTubeSolution(synthesized_nodes, synthesized_edges, start, end):
     dna_sequences = enc.toDnaSequence(synthesized_nodes, synthesized_edges)
-    p1 = DnaSeqRecord(synthesized_nodes[start])
-    p2 = DnaSeqRecord(enc.getSeqComplement(synthesized_nodes[end]))
+    primer1 = DnaSeqRecord(synthesized_nodes[start])
+    primer2 = DnaSeqRecord(enc.getSeqComplement(synthesized_nodes[end]))
     tube_solution = Assembly(dna_sequences, limit=10)
     print("\n" + str(tube_solution) + "\n")
     candidates = []
 
-    for i in range(len(tube_solution.linear_products)):
-        product = tube_solution.linear_products[i]
+    for product in tube_solution.assemble_linear():
         template = DnaSeqRecord(product)
-        pcr = Anneal([p1, p2], template, limit=10)
+        pcr = Anneal([primer1, primer2], template, limit=10)
         gel = len(synthesized_nodes) * enc.SEQ_LEN
 
         if len(pcr.products) != 0:
@@ -147,4 +147,5 @@ def extractEdges(path, node_list, edge_list):
 
 
 if __name__ == '__main__':
-    main()
+    for i in range(100):
+        main()

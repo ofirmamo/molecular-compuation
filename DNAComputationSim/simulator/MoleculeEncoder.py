@@ -25,7 +25,7 @@ class Encoder:
 
     def synthesizeEdges(self, graph, encoded_nodes):
         return {(u, v): encoded_nodes[u][-10:] + encoded_nodes[v][:10]
-                for (u, v) in set(graph.edges())}
+                for (u, v) in graph.edges()}
 
     def getSeqComplement(self, seq):
         return "".join(self.COMPLEMENTS[base] for base in seq)[::-1]
