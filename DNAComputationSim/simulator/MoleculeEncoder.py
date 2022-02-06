@@ -1,4 +1,3 @@
-import itertools
 import random as rand
 
 from pydna.dseq import Dseq as DnaSeq

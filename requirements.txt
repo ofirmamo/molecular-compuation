@@ -1,5 +1,6 @@
 matplotlib==3.5.1
 networkx==2.6.3
 pydna==4.0.6
+ply==3.11
 
 sortedcontainers==2.4.0

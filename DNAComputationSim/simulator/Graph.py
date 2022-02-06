@@ -14,7 +14,6 @@ class Graph:
         self.file_path_cities = 'Networks/cities.txt'
         self.file_path_nums = 'Networks/nums.txt'
         self.file_path_peterson = 'Networks/peterson.txt'
-        self.file_path_sat = 'sat/satOutput.txt'
         self._citiesGraph = networkx.read_edgelist(self.file_path_cities,
                                                   create_using=networkx.DiGraph(),
                                                   nodetype=str,
@@ -24,10 +23,6 @@ class Graph:
                                                 nodetype=str,
                                                 data=[('to', str)])
         self._petersonGraph = networkx.read_edgelist(self.file_path_peterson,
-                                                    create_using=networkx.DiGraph(),
-                                                    nodetype=str,
-                                                    data=[('to', str)])
-        self._sat = networkx.read_edgelist(self.file_path_sat,
                                                     create_using=networkx.DiGraph(),
                                                     nodetype=str,
                                                     data=[('to', str)])
@@ -42,7 +37,3 @@ class Graph:
     @property
     def petersonGraph(self):
         return self._petersonGraph
-
-    @property
-    def sat(self):
-        return self._sat
