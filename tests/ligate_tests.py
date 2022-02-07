@@ -90,12 +90,12 @@ def ligation_single_watson_end():
     candidates = [Dseqrecord(Dseq(watson='GAGG', crick='C', ovhg=3)), Dseqrecord(Dseq(watson='GAG', crick='C', ovhg=0))]
     assert lab.ligation.ligation_single_watson_end(fragment, candidates, 1)
     assert candidates[0] == Dseqrecord(Dseq(watson='GAGG', crick='C', ovhg=3))
-    assert candidates[1] == Dseqrecord(Dseq(watson='GAGAAGG', crick='CCTTCTC', ovhg=0))
+    assert candidates[-1] == Dseqrecord(Dseq(watson='GAGAAGG', crick='CCTTCTC', ovhg=0))
 
     candidates = [Dseqrecord(Dseq(watson='GAGG', crick='C', ovhg=3)), Dseqrecord(Dseq(watson='GA', crick='C', ovhg=0))]
     assert lab.ligation.ligation_single_watson_end(fragment, candidates, 1)
     assert candidates[0] == Dseqrecord(Dseq(watson='GAGG', crick='C', ovhg=3))
-    assert candidates[1] == Dseqrecord(Dseq(watson='GA AAGG', crick='CCTTCTC', ovhg=0))
+    assert candidates[-1] == Dseqrecord(Dseq(watson='GA AAGG', crick='CCTTCTC', ovhg=0))
 
     candidates = [Dseqrecord(Dseq(watson='GAGG', crick='C', ovhg=3))]
     assert not lab.ligation.ligation_single_watson_end(fragment, candidates, 1)
@@ -108,19 +108,19 @@ def ligation_single_crick_end():
                   Dseqrecord(Dseq(watson='AG', crick='CTTCTT', ovhg=1))]
     assert lab.ligation.ligation_single_crick_end(fragment, candidates, limit=1)
     assert candidates[0] == Dseqrecord(Dseq(watson='AG', crick='', ovhg=0))
-    assert candidates[1] == Dseqrecord(Dseq(watson='AGAAGGAGG', crick='CCTCCTTCTT', ovhg=1))
+    assert candidates[-1] == Dseqrecord(Dseq(watson='AGAAGGAGG', crick='CCTCCTTCTT', ovhg=1))
 
     candidates = [Dseqrecord(Dseq(watson='AG', crick='', ovhg=0)),
                   Dseqrecord(Dseq(watson='AG', crick='TTCT', ovhg=0))]
     assert lab.ligation.ligation_single_crick_end(fragment, candidates, limit=1)
     assert candidates[0] == Dseqrecord(Dseq(watson='AG', crick='', ovhg=0))
-    assert candidates[1] == Dseqrecord(Dseq(watson='AGAAGGAGG', crick='CCTC TTCT', ovhg=0))
+    assert candidates[-1] == Dseqrecord(Dseq(watson='AGAAGGAGG', crick='CCTC TTCT', ovhg=0))
 
     candidates = [Dseqrecord(Dseq(watson='AG', crick='', ovhg=0)),
                   Dseqrecord(Dseq(watson='AG', crick='TC', ovhg=-1))]
     assert lab.ligation.ligation_single_crick_end(fragment, candidates, limit=1)
     assert candidates[0] == Dseqrecord(Dseq(watson='AG', crick='', ovhg=0))
-    assert candidates[1] == Dseqrecord(Dseq(watson='AGAAGGAGG', crick='CCTC  TC', ovhg=-1))
+    assert candidates[-1] == Dseqrecord(Dseq(watson='AGAAGGAGG', crick='CCTC  TC', ovhg=-1))
 
     print('** End ligation_single_crick_end **')
 
@@ -131,11 +131,11 @@ def ligation_single_crick_start():
                   Dseqrecord(Dseq(watson='AGG', crick='CCTCT', ovhg=2))]
     assert lab.ligation.ligation_single_crick_start(fragment, candidates, limit=1)
     assert candidates[0] == Dseqrecord(Dseq(watson='AA', crick='TTCC', ovhg=2))
-    assert candidates[1] == Dseqrecord(Dseq(watson='AAGGAGAGG', crick='CCTCTCCTT', ovhg=0))
+    assert candidates[-1] == Dseqrecord(Dseq(watson='AAGGAGAGG', crick='CCTCTCCTT', ovhg=0))
 
     candidates = [Dseqrecord(Dseq(watson='AGG', crick='CCTC', ovhg=1))]
     assert lab.ligation.ligation_single_crick_start(fragment, candidates, limit=1)
-    assert candidates[0] == Dseqrecord(Dseq(watson='AAGGAGAGG', crick='CCTC CCTT', ovhg=0))
+    assert candidates[-1] == Dseqrecord(Dseq(watson='AAGGAGAGG', crick='CCTC CCTT', ovhg=0))
 
     print('** End ligation_single_crick_start **')
 
@@ -146,13 +146,13 @@ def ligation_single_watson_start():
                   Dseqrecord(Dseq(watson='AGAGAA', crick='TT', ovhg=-4))]
     assert lab.ligation.ligation_single_watson_start(fragment, candidates, limit=1)
     assert candidates[0] == Dseqrecord(Dseq(watson='AGAA', crick='TTCT', ovhg=0))
-    assert candidates[1] == Dseqrecord(Dseq(watson='AAGGAGAGAA', crick='TTCTCTCCTTT', ovhg=1))
+    assert candidates[-1] == Dseqrecord(Dseq(watson='AAGGAGAGAA', crick='TTCTCTCCTTT', ovhg=1))
 
     candidates = [Dseqrecord(Dseq(watson='AGAA', crick='TTCT', ovhg=0)),
                   Dseqrecord(Dseq(watson='GAGAA', crick='TT', ovhg=-3))]
     assert lab.ligation.ligation_single_watson_start(fragment, candidates, limit=1)
     assert candidates[0] == Dseqrecord(Dseq(watson='AGAA', crick='TTCT', ovhg=0))
-    assert candidates[1] == Dseqrecord(Dseq(watson='AAGG GAGAA', crick='TTCTCTCCTTT', ovhg=1))
+    assert candidates[-1] == Dseqrecord(Dseq(watson='AAGG GAGAA', crick='TTCTCTCCTTT', ovhg=1))
 
     print('** End ligation_single_watson_start **')
 
@@ -164,20 +164,19 @@ def sanity_sat_edges():
 
     candidates = [x1_comp, a0_comp]
     assert lab.ligation.ligation_single_fragment(a0_x1, candidates, limit=2)
-    assert candidates[0] == a0_comp
-    assert candidates[1] == Dseqrecord(Dseq(watson='AAAAGG', crick='CCCC', ovhg=-4, linear=True))
-
-    candidates_copy = candidates.copy()
-    fragment = candidates_copy[0]
-    candidates_new = candidates_copy[1:]
-    assert lab.ligation.ligation_single_fragment(fragment, candidates_new, limit=2)
-    assert candidates_new[0] == Dseqrecord(Dseq(watson='AAAAGG', crick='CCCCTTTT', ovhg=0))
+    assert candidates[1] == a0_comp
+    assert candidates[-1] == Dseqrecord(Dseq(watson='AAAAGG', crick='CCCC', ovhg=-4, linear=True))
 
     candidates_copy = candidates.copy()
     fragment = candidates_copy[1]
-    candidates_new = candidates_copy[:1]
+    candidates_new = candidates_copy[1:]
     assert lab.ligation.ligation_single_fragment(fragment, candidates_new, limit=2)
-    assert candidates_new[0] == Dseqrecord(Dseq(watson='AAAAGG', crick='CCCCTTTT', ovhg=0))
+    assert candidates_new[-1] == Dseqrecord(Dseq(watson='AAAAGG', crick='CCCCTTTT', ovhg=0))
+
+    candidates_copy = candidates.copy()
+    fragment = candidates_copy[2]
+    assert lab.ligation.ligation_single_fragment(fragment, candidates_new, limit=2)
+    assert candidates_new[-1] == Dseqrecord(Dseq(watson='AAAAGG', crick='CCCCTTTT', ovhg=0))
 
 
 def complex_sat_edges():
@@ -203,19 +202,19 @@ def complex_sat_edges():
     assert lab.ligation.ligation_single_fragment(x1_comp, candidates, limit=2)
     assert candidates[-1] == Dseqrecord(Dseq(watson=edge(X1, A1), crick=X1COMP, ovhg=2))
 
-    fragment = candidates[0]
+    fragment = candidates[1]
     candidates = candidates[1:]
     assert lab.ligation.ligation_single_fragment(fragment, candidates, limit=2)
     assert candidates[-1] == Dseqrecord(Dseq(watson=edge_start(A0, X1) + edge(X1, A1), crick=X1COMP, ovhg=-4))
 
-    fragment = candidates[0]
+    fragment = candidates[1]
     candidates = candidates[1:]
     assert lab.ligation.ligation_single_fragment(fragment, candidates, limit=2)
     assert candidates[-1] == Dseqrecord(
         Dseq(watson=edge_start(A0, X1) + edge(X1, A1), crick=(A0COMP + X1COMP)[::-1], ovhg=0))
 
-    fragment = candidates[0]
-    candidates = candidates[1:]
+    fragment = candidates[1]
+    candidates = candidates[-1:]
     assert lab.ligation.ligation_single_fragment(fragment, candidates, limit=2)
     assert candidates[-1] == Dseqrecord(
         Dseq(watson=edge_start(A0, X1) + edge(X1, A1), crick="".join(reversed([A0COMP, X1COMP, A1COMP])), ovhg=0))

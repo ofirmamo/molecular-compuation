@@ -16,7 +16,7 @@ def ligate(tube: List[Dseqrecord], limit, rounds=7500):
     for i in range(rounds):
         molecule = random.choice(tube)
         p = failure_probability(molecule)
-        if random.random() <= p:
+        if random.random() <= -1:
             print('Failure ligation, probability')
             continue
         else:

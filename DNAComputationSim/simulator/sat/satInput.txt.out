@@ -10,3 +10,11 @@ a2 x3
 a2 ~x3
 x3 a3
 ~x3 a3
+a3 x4
+a3 ~x4
+x4 a4
+~x4 a4
+a4 x5
+a4 ~x5
+x5 a5
+~x5 a5

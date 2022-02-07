@@ -2,7 +2,10 @@ import networkx
 import networkx as nx
 from matplotlib import pyplot as plt
 
+from lab.gel_electrophoresis import gel_electrophoresis
 from lab import synthesizer, ligation
+from lab.magnetic_beads_filter import magnetic_beads_filter
+from lab.pcr import pcr, create_primers
 from sat.instance import SATInstance
 
 SAT_BASE = 'DNAComputationSim/simulator/sat'
@@ -53,8 +56,30 @@ def run(args):
     nodes = synthesize_nodes(graph=graph)
     edges = synthesize_edges(graph=graph, synthesized_nodes=nodes)
     complement_nodes = synthesizer.synthesize_crick_complements(list(nodes.items()))
+    reversed_nodes_dict = {value.seq.watson: key for (key, value) in nodes.items()}
+
+    a_node_names = sorted([node_name for node_name in nodes.keys() if node_name.startswith('a')])
+    a0 = nodes[a_node_names[0]]
+    an_complement = complement_nodes[a_node_names[-1]]
 
     # Create sufficient DNA to generate candidates.
     tube = (list(edges.values()) + list(complement_nodes.values()))
-    ligation.ligate(tube, limit=10)
-    pass
+    ligation.ligate(tube, limit=10, rounds=2000)
+    for clause in instance.clauses:
+        Ti = []
+        for literal, state in clause.items():
+            Ti.extend(magnetic_beads_filter(tube, nodes[literal if state else f"~{literal}"].seq.watson))
+        tube = pcr(Ti, create_primers(a0, an_complement), rounds=1)
+    res = gel_electrophoresis(tube)
+
+    if any(res):
+        print('SAT is satisfiable')
+        path = gel_electrophoresis(res, variant='max')
+        dna_desequenced = []
+        for i in range(0, len(path), 20):
+            node = reversed_nodes_dict.get(path[i:i+20].seq.watson)
+            if not node.startswith('a'):
+                dna_desequenced.append(node)
+        print(f'assignement: {dna_desequenced}')
+    else:
+        print('SAT is not satisfiable')
