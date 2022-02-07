@@ -16,7 +16,7 @@ def ligate(tube: List[Dseqrecord], limit, rounds=7500):
     for i in range(rounds):
         molecule = random.choice(tube)
         p = failure_probability(molecule)
-        if random.random() <= -1:
+        if random.random() <= p:
             print('Failure ligation, probability')
             continue
         else:
@@ -126,10 +126,8 @@ def ligation_single_crick_start(fragment: Dseqrecord, candidates: List[Dseqrecor
 
 
 def ligation_single_fragment(fragment: Dseqrecord, candidates: List[Dseqrecord], limit):
-    case1_longer_crick_at_start = (
-                                          fragment.seq.watson.strip() == '' and fragment.seq.crick.strip() != '') or fragment.seq.ovhg > 0
-    case2_longer_watson_at_start = (
-                                           fragment.seq.watson.strip() != '' and fragment.seq.crick.strip() == '') or fragment.seq.ovhg < 0
+    case1_longer_crick_at_start = (fragment.seq.watson.strip() == '' and fragment.seq.crick.strip() != '') or fragment.seq.ovhg > 0
+    case2_longer_watson_at_start = (fragment.seq.watson.strip() != '' and fragment.seq.crick.strip() == '') or fragment.seq.ovhg < 0
     case3_shorter_crick_at_end = len(fragment.seq.watson.strip()) + fragment.seq.ovhg > len(fragment.seq.crick.strip())
     case4_shorter_watson_at_end = len(fragment.seq.watson.strip()) + fragment.seq.ovhg < len(fragment.seq.crick.strip())
 
