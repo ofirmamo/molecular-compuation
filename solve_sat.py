@@ -64,14 +64,11 @@ def run(args):
 
     # Create sufficient DNA to generate candidates.
     tube = (list(edges.values()) + list(complement_nodes.values()))
-    ligation.ligate(tube, limit=10, rounds=150000)
+    ligation.ligate(tube, limit=9, rounds=50000)
     for clause in instance.clauses:
         Ti = []
         for literal, state in clause.items():
             Ti.extend(magnetic_beads_filter(tube, nodes[literal if state else f"~{literal}"].seq.watson))
-        for mol in Ti:
-            if len(mol.seq.watson) == 140 and len(mol.seq.crick):
-                print(f'First iteration path: {sequence_result(mol, reversed_nodes_dict)}')
         tube = pcr(Ti, create_primers(a0, an_complement), rounds=1)
     res = gel_electrophoresis(tube)
 
