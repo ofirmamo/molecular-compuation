@@ -33,9 +33,7 @@ def join_watson(elements: List[Tuple[str, DnaSeqRecord, DnaSeqRecord]], take_fir
 def synthesize_crick_complements(elements) -> Dict[str, DnaSeqRecord]:
     return {
         element: DnaSeqRecord(
-            DnaSeq(watson='', crick=''.join(COMPLEMENTS[c] for c in dna.seq.watson)[::-1], linear=True, ovhg=0),
-            linear=True,
-            name=element)
+            DnaSeq(watson='', crick=''.join(COMPLEMENTS[c] for c in dna.seq.watson)[::-1], linear=True, ovhg=0))
         for element, dna in elements
     }
 

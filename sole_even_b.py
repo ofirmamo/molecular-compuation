@@ -1,14 +1,14 @@
-from typing import List
-
 from pydna.dseq import Dseq
 from pydna.dseqrecord import Dseqrecord
 
-import lab.common, lab.gel_electrophoresis, lab.ligation
+import lab.common
+import lab.gel_electrophoresis
+import lab.ligation
 from lab.cleave import FOKI_BASE_SEQ
 
 START_MSG = 'DNA sequence is:'
 
-BASE = 'DNAComputationSim/simulator/b-even'
+BASE = 'DNAComputationSim/b-even'
 BP_LENGTH = 20
 TERMINAL = Dseqrecord(Dseq(watson='TGTCGC', crick='GCGACA', ovhg=0, linear=True))
 letter_mapping = {

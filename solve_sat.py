@@ -8,7 +8,7 @@ from lab.magnetic_beads_filter import magnetic_beads_filter
 from lab.pcr import pcr, create_primers
 from sat.instance import SATInstance
 
-SAT_BASE = 'DNAComputationSim/simulator/sat'
+SAT_BASE = 'DNAComputationSim/sat'
 SAT_BP_LENGTH = 20
 
 
@@ -64,22 +64,30 @@ def run(args):
 
     # Create sufficient DNA to generate candidates.
     tube = (list(edges.values()) + list(complement_nodes.values()))
-    ligation.ligate(tube, limit=10, rounds=2000)
+    ligation.ligate(tube, limit=10, rounds=150000)
     for clause in instance.clauses:
         Ti = []
         for literal, state in clause.items():
             Ti.extend(magnetic_beads_filter(tube, nodes[literal if state else f"~{literal}"].seq.watson))
+        for mol in Ti:
+            if len(mol.seq.watson) == 140 and len(mol.seq.crick):
+                print(f'First iteration path: {sequence_result(mol, reversed_nodes_dict)}')
         tube = pcr(Ti, create_primers(a0, an_complement), rounds=1)
     res = gel_electrophoresis(tube)
 
     if any(res):
         print('SAT is satisfiable')
         path = gel_electrophoresis(res, variant='max')
-        dna_desequenced = []
-        for i in range(0, len(path), 20):
-            node = reversed_nodes_dict.get(path[i:i+20].seq.watson)
-            if not node.startswith('a'):
-                dna_desequenced.append(node)
+        dna_desequenced = sequence_result(path, reversed_nodes_dict)
         print(f'assignement: {dna_desequenced}')
     else:
         print('SAT is not satisfiable')
+
+
+def sequence_result(path, reversed_nodes_dict):
+    dna_desequenced = []
+    for i in range(0, len(path), 20):
+        node = reversed_nodes_dict.get(path[i:i + 20].seq.watson)
+        if not node.startswith('a'):
+            dna_desequenced.append(node)
+    return dna_desequenced
